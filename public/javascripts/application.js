@@ -101,59 +101,12 @@ $(document).ready(function() {
 	  }
 	});
 
-	function animate_board() {
-		//first, check if player has collided with block
-		//if so, end the game
-		collided = check_collision();
-
-		if (collided == false) {
-			//to show as if pieces are falling, remove the bottom row every second
-			//and add a new row on top. Rather than moving pieces down, this is 
-			//simply changing the array and appears as if pieces are falling
-			board.pop();
-			//generate a random first row that will move through the board
-			var first_row = [];
-			for (var j=0; j<cols; j++) {
-				var num = Math.round(Math.random());
-				first_row.push(num);
-			}
-			//ensure that there is a path for player to follow through board
-			var counter = 0;
-			while (counter < cols) {
-				if ((board[0][counter]) == 0) {  //if block is empty, create at least one empty block next to it or in front
-					//chance determines whether block to left, straight, or right is empty
-					var chance = Math.floor(Math.random() * 3) + 1;
-					if (chance == 1) { //block to left should be empty
-						if (counter == 0) {
-							first_row[cols-1] = 0;
-						}
-						else {
-							first_row[counter-1] = 0;
-						}
-					}
-					else if (chance == 2) { //block to right should be empty
-						if (counter == cols-1) {
-							first_row[0] = 0;
-						}
-						else {
-							first_row[counter+1] = 0;
-						}
-					}
-					else { //block in front should be empty
-						first_row[counter] = 0;
-					}
-				}
-				counter += 1;
-			}
-			
-			board.unshift(first_row); //add it to the front of the array
-			repaint_board();
-			increment_bonus();
-		}
-		else {
-			socket.emit('endgame');
-		}
-	}
+	//called from serverSocket to animate board in the same way across all clients
+	socket.on('change_board', function (data) {
+	  	board = data.board;
+	  	repaint_board();
+	  	increment_bonus();
+	})
 
 	function repaint_board() {
 		for (var i=0; i<rows; i++) {
@@ -170,16 +123,13 @@ $(document).ready(function() {
 		}			
 	}
 
-	function check_collision() {
+	socket.on('check_collision', function() {
 		//check if player collided with a piece by comparing player_col
 		//to last row of board
 		if (board[rows-1][player_col] == 1) {
-			return true;
+			socket.emit('endgame');
 		}
-		else {
-			return false;
-		}
-	}
+	})
 
 	function increment_bonus() {
 		//increment the bonus every second that the player doesn't collide
@@ -195,27 +145,19 @@ $(document).ready(function() {
 		}
 	}
 
-	var gameplay; //initialize global variable that will be the interval
-
 	function end_game() {
-		clearInterval(gameplay);
 		var bonus_input = $("<input type='hidden' name='bonus' value='" + bonus.toFixed(2) + "'>").appendTo($(form_selector));
 		var keystrokes_input = $("<input type='hidden' name='keystrokes' value='" + keystrokes + "'>").appendTo($(form_selector));
 		$('#mturk_form').submit(); //submit the results to mturk
 		alert("Thanks for playing! One of the members in your team has lost the game. Your results have been submitted to us and you will receive payment shortly. Have a great day!");
 	}
 
-	function start_game() {
-		gameplay = setInterval(animate_board, 1000);
-	}
-
 	$('#start').on('click', function() {
-		socket.emit('startgame');
+		socket.emit('startgame', {board: board, cols: cols});
 	})
 
 	//start game once everyone is ready
 	socket.on('readytostart', function () {
-	  	start_game();
 	  	$('#start').hide();
 	})
 
