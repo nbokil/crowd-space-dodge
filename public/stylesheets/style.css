@@ -1,0 +1,19 @@
+#gameboard {
+  background-color: black;
+  position: relative;
+}
+
+#player {
+  position: absolute;
+  background: url(/images/rocket-ship.png);
+  background-size: 50px 50px;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+#bonus {
+  width: 150px;
+  font-size: 40px;
+  border: 2px solid black;
+  text-align: center;
+}

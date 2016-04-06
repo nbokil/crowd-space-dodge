@@ -1,0 +1,88 @@
+<html>
+
+  <head>
+
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="javascripts/application.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="dist/sweetalert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/dist/sweetalert.css">
+
+    <title>Contact - The Word Game</title>
+  
+  </head>
+
+<div class="container">
+
+  <div class="container" id="nav">
+      <!-- nav bar -->
+    <nav class="navbar navbar-default navbar-fixed-top" id="nav">
+      <h1><center><b>&raquo; Welcome To Contact ! - test your intellect &laquo;</b></center></h1>
+    </nav>
+
+  </div>
+
+  <br>
+
+  <div id="bodytext">
+
+    <div id="ls"><center></center></div>
+    
+    <br>
+    
+    <div class="row">
+
+      <form id='form-player'>
+          <fieldset class="form-group">
+              <label for="player-word"><h3><b>Enter A Word For Players to Contact</b></h3></label>
+              <input type="text" class="form-control" id="player-word" placeholder="...That starts with the letter(s) above...">
+         </fieldset>
+         <fieldset class="form-group">
+              <label for="player-hint"><h3><b>Enter A Hint For Your Word</b></h3></label>
+              <input type="text" class="form-control" id="player-hint" placeholder="...Enter a hint...">
+         </fieldset>
+      </form>
+
+    </div>
+
+    <hr>
+
+     <div class="row">
+      <button type="button" class="btn btn-primary btn-lg pull-left" id="sendplayerwordhint" value="Click To Send"><span>Click to Send</span></button>
+    </div>
+
+  </div>
+  
+  <br>
+
+  <div class="row">
+    <div id="playerhint"></div>
+      <div id="player-guess-div">
+          <form id='player-guess'>
+              <fieldset class="form-group">
+                  <label for="player-guess-word"><h3><b>Guess The Word</b></h3></label>
+                  <input type="text" class="form-control" id="player-guess-word" placeholder="Guess The word...">
+             </fieldset>
+          </form>
+          <hr>
+          <div class="row">
+            <button type="button" class="btn btn-primary btn-lg pull-left" id="guessplayerword" value="Click To Guess">Click to Guess</button>
+          </div>
+      </div>
+  </div>
+
+  <br>
+
+  <div class="row">
+    <div id="contact"></div>
+  </div>
+
+</div>
+</html>
+
+
+
