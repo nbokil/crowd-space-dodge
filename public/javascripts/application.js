@@ -2,8 +2,8 @@ $(document).ready(function() {
 
 //-------------------Setting up initial socket connection --------------------------------------------------
 
-	//var socket = io.connect("http://spacedodge-nbokil.rhcloud.com:8000");
-	var socket = io.connect();
+	var socket = io.connect("http://spacedodge-nbokil.rhcloud.com:8000");
+	//var socket = io.connect();
 	//show the number of current players in the game
 	socket.on('players', function (data) {
 	  $("#numPlayers").text(data.number);
