@@ -20,7 +20,7 @@ exports.init = function(io) {
      */
 		socket.broadcast.emit('players', { number: currentPlayers});
 
-		checklocations = setInterval(animate_crowd, 1000);
+		checklocations = setInterval(animate_crowd, 500);
 
 		//Emit that the game has started for all players when one person clicks start game button
 		socket.on('startgame', function (data) {
