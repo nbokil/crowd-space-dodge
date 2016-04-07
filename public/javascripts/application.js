@@ -2,11 +2,10 @@ $(document).ready(function() {
 
 //-------------------Setting up initial socket connection --------------------------------------------------
 
-	var socket = io.connect("http://spacedodge-nbokil.rhcloud.com:8000");
-	//var socket = io.connect();
+	//var socket = io.connect("http://spacedodge-nbokil.rhcloud.com:8000");
+	var socket = io.connect();
 	//show the number of current players in the game
 	socket.on('players', function (data) {
-	  console.log(data);
 	  $("#numPlayers").text(data.number);
 		});
 
@@ -67,7 +66,19 @@ $(document).ready(function() {
 	$(player).css("left", player_col*cell_size);
 	$(player).css("top", player_top);
 
+	//Create a crowd player div that can move along the bottom row of the gameboard
+	var crowd = $("<div id='crowd'></div>");
+	$(crowd).css("width", cell_size);
+	$(crowd).css("height", cell_size);
+
+	var crowd_col = 0; //column that crowd starts off in
+	//Set location of crowd on the board
+	var crowd_top = ((rows-1)*cell_size);
+	$(crowd).css("left", crowd_col*cell_size);
+	$(crowd).css("top", crowd_top);
+
 	$(gameboard).append(player);
+	$(gameboard).append(crowd);
 
 	$(document.body).append(gameboard); //INITIAL GAMEBOARD COMPLETE
 
@@ -100,6 +111,17 @@ $(document).ready(function() {
 	    $(player).css("left", player_col*cell_size);
 	  }
 	});
+
+	//send player_col of each client so that we can redraw crowd player on board
+	socket.on('get_player_locations', function () {
+		socket.emit('send_player_locations', {player_col: player_col} );
+	})
+
+	//redraw crowd player based on average of player locations
+	socket.on('move_crowd_player', function (data) {
+		crowd_col = data.col;
+		$(crowd).css("left", crowd_col*cell_size);
+	})
 
 	//called from serverSocket to animate board in the same way across all clients
 	socket.on('change_board', function (data) {

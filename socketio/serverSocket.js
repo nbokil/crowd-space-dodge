@@ -3,10 +3,14 @@ exports.init = function(io) {
 	var gameplay; //initialize global variable that will be the interval
 	var board; //intialize board variable
 	var cols; //initialize cols variable
+	var checklocations; //initialize a global variable that will check the player's locations every half-second
+	var crowd_cols = {}; //keep track of columns that players are in
 
   // When a new connection is initiated
 	io.sockets.on('connection', function (socket) {
 		++currentPlayers;
+		crowd_cols[socket.id] = 0;
+
 		// Send ("emit") a 'players' event back to the socket that just connected.
 		socket.emit('players', { number: currentPlayers});
 
@@ -15,6 +19,8 @@ exports.init = function(io) {
 		 * Broadcast is not emitted back to the current (i.e. "this") connection
      */
 		socket.broadcast.emit('players', { number: currentPlayers});
+
+		checklocations = setInterval(animate_crowd, 1000);
 
 		//Emit that the game has started for all players when one person clicks start game button
 		socket.on('startgame', function (data) {
@@ -29,15 +35,34 @@ exports.init = function(io) {
 			move_board();
 		}
 
+		function animate_crowd() {
+			io.sockets.emit('get_player_locations');
+		}
+
+		socket.on('send_player_locations', function (data) {
+			crowd_cols[socket.id] = data.player_col;
+			move_crowd();
+		})
+
+		//Calculate the average location of the crowd and draw on the board
+		function move_crowd() {
+			var sum = 0;
+			for (var key in crowd_cols) {
+				sum += crowd_cols[key];
+			}
+			var average = Math.floor(sum / currentPlayers);
+			io.sockets.emit('move_crowd_player', {col: average} );
+		}
+
 		//Emit that game has ended to all players once one person loses or finishes the game
 		socket.on('endgame', function () {
 			clearInterval(gameplay);
+			clearInterval(checklocations);
 			io.sockets.emit('finished');
 		})
 
 		//change board here so that it is the same for all players
 		function move_board() {
-			
 			//to show as if pieces are falling, remove the bottom row every second
 			//and add a new row on top. Rather than moving pieces down, this is 
 			//simply changing the array and appears as if pieces are falling
@@ -79,7 +104,6 @@ exports.init = function(io) {
 			board.unshift(first_row); //add it to the front of the array
 			io.sockets.emit('change_board', {board: board} );
 		}
-
 		
 		/*
 		 * Upon this connection disconnecting (sending a disconnect event)
@@ -89,6 +113,7 @@ exports.init = function(io) {
 		 */
 		socket.on('disconnect', function () {
 			--currentPlayers;
+			delete crowd_cols[socket.id];
 			socket.broadcast.emit('players', { number: currentPlayers});
 		});
 	});
