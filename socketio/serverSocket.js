@@ -5,6 +5,7 @@ exports.init = function(io) {
 	var cols; //initialize cols variable
 	var checklocations; //initialize a global variable that will check the player's locations every half-second
 	var crowd_cols = {}; //keep track of columns that players are in
+	var mediator = 'median';
 
   // When a new connection is initiated
 	io.sockets.on('connection', function (socket) {
@@ -44,14 +45,60 @@ exports.init = function(io) {
 			move_crowd();
 		})
 
-		//Calculate the average location of the crowd and draw on the board
+		socket.on('majority_mediator', function() {
+			mediator = 'majority';
+		})
+
+		socket.on('median_mediator', function() {
+			mediator = 'median';
+		})
+
+		//Calculate the location of the crowd based on majority or median and draw on the board
 		function move_crowd() {
-			var sum = 0;
+			var column;
+			var values = [];
 			for (var key in crowd_cols) {
-				sum += crowd_cols[key];
+				values.push(crowd_cols[key]);
 			}
-			var average = Math.floor(sum / currentPlayers);
-			io.sockets.emit('move_crowd_player', {col: average} );
+			if (mediator == 'majority') {
+				if (values.length == 1) {
+					column = values[0];
+				}
+				else {
+					//find majority, or 'mode', as mediator
+					values.sort( function(a,b) {return a - b;} );
+					var counter = 1; //start by comparing first number to next one
+					var majority_count = 0;
+					var majority_value;
+					for (var num=0; num < values.length; num++) {
+						if (values[num] == values[num+1]) {
+							counter += 1;
+						}
+						else {
+							if (counter > majority_count) {
+								majority_count = counter;
+								majority_value = values[num];
+							}
+							else {
+								counter = 0;
+							}
+						}
+					}
+					column = majority_value;
+				}
+			}
+			else if (mediator == 'median') {
+				//find median as mediator
+				values.sort( function(a,b) {return a - b;} );
+				var half = Math.floor(values.length/2);
+			    if (values.length % 2) {
+			        column = values[half];
+			    }
+			    else {
+			        column = Math.floor((values[half-1] + values[half]) / 2.0);
+			    }
+			}
+			io.sockets.emit('move_crowd_player', {col: column} );
 		}
 
 		//Emit that game has ended to all players once one person loses or finishes the game

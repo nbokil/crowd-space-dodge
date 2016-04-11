@@ -15,14 +15,17 @@
   </head>
 
   <body>
-    <h1>Space Dodge</h1>
+    <h1>Space Dodge with the Crowd!</h1>
     <p>Instructions: Dodge the incoming asteroids using the left and right arrow keys. 
-       For every second you play, your bonus increases. Play to win a max bonus of $2.00!<br>
-       <em><b>To begin playing, click the start button below!</b></em>
+       For every second your team plays, your bonus increases. Play to win a max bonus of $2.00!<br>
+       The green box shows the aggregate position of other members in your team.<br>
+       To change how the aggregate position is calculated, click the various buttons below.<br><br>
+       <button id="median">Median</button> <button id="majority">Majority</button><br><br>
+       <em><b>To begin playing, click the start button!</b></em>
+       <button id="start">Start</button>
      </p>
 
-    <p> There are currently <span id="numPlayers">no</span> players.</p>
-    <button id="start">Start</button> 
+    <p> There are currently <span id="numPlayers">no</span> players.</p> 
     
     <form id="mturk_form"></form>
 
