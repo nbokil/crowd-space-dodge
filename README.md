@@ -1,19 +1,14 @@
-# Contact
+# Space Dodge
 
 ##Synopsis
 
-Contact is a web application game developed in Node.js that uses the Express framework and Socket.IO. The game is played with a minimum of three sockets (players) where one is the word master and the others are working together to guess the word master's word. This game was designed for 67-328: Mobile to Cloud Final Project at Carnegie Mellon University.
+Space Dodge is a web application game developed in Node.js that uses the Express framework and Socket.IO. The game can be played individually or multiplayer, where users work together to move the spaceship left/right and dodge incoming asteroids. The game shows the location of the individual's spaceship and the aggregate crowd's locations, making it a form of collaborative gameplay similar to Twitch. This game was designed for 05-899: Crowd Programming at Carnegie Mellon University.
 
 ##Installation via NPM
 
-Contact uses the following node-modules that need to be installed via npm:
+Space Dodge uses node-modules specified in package.json that can be installed with the following command:
 
-npm install socket.io  
-npm install body-parser  
-npm install ejs  
-npm install express  
-npm install mongodb  
-npm install morgan  
+npm install
 
 ##License
 
