@@ -5,7 +5,7 @@ exports.init = function(io) {
 	var cols; //initialize cols variable
 	var checklocations; //initialize a global variable that will check the player's locations every half-second
 	var crowd_cols = {}; //keep track of columns that players are in
-	var mediator = 'median';
+	var mediator = 'median'; //default mediator
 
   // When a new connection is initiated
 	io.sockets.on('connection', function (socket) {
@@ -21,7 +21,7 @@ exports.init = function(io) {
      */
 		socket.broadcast.emit('players', { number: currentPlayers});
 
-		checklocations = setInterval(animate_crowd, 500);
+		checklocations = setInterval(animate_crowd, 500); //check for player locations to move crowd every half-second
 
 		//Emit that the game has started for all players when one person clicks start game button
 		socket.on('startgame', function (data) {
